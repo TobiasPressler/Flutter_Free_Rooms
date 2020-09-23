@@ -9,6 +9,10 @@
 .history
 .svn/
 
+.vscode/
+.dart_tool/
+
+android/key.properties
 # IntelliJ related
 *.iml
 *.ipr
