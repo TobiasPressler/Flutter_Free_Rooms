@@ -17,9 +17,9 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  base32: "^1.1.1"
   flutter_progress_button: "^0.6.4"
   shared_preferences: ^0.5.6+3
-  otp: ^2.0.3
   intl: ^0.15.8
   flutter_typeahead: ^1.8.0
   http: ^0.12.0+4
