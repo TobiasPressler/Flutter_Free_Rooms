@@ -72,6 +72,11 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
         tag: ${{ steps.version.outputs.content }}
         commit: ${{ github.sha }}
+    - name: Upload app bundle
+      uses: actions/upload-artifact@v2
+      with:
+        name: appbundle
+        path: build/app/outputs/bundle/release/app-release.aab
         
   release:
     name: Release app to internal track
