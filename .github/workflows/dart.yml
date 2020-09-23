@@ -72,3 +72,22 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
         tag: ${{ steps.version.outputs.content }}
         commit: ${{ github.sha }}
+        
+  release:
+    name: Release app to internal track
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Get appbundle from artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: appbundle
+    - name: Release app to internal track
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_ACCOUNT_KEY }}
+        packageName: com.spectre
+        releaseFile: app-release.aab
+        track: production
+        whatsNewDirectory: distribution/whatsnew
