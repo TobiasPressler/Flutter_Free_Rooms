@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Fetch all history for all tags and branches
       run: |
-        git pull
+        git fetch
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.2
       with:
