@@ -72,6 +72,9 @@ class _SelectSchoolState extends State<SelectSchool> {
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                       labelStyle: new TextStyle(color: Colors.white),
                     )),
                 suggestionsCallback: (pattern) async {
@@ -328,10 +331,20 @@ class _FreieRaeumeState extends State<FreieRaeume> {
     });
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Free Rooms"),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text("Free Rooms"), actions: [
+        Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                SharedPreferences.getInstance().then((value) {
+                  value.remove("sharedSecret");
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/start', (Route<dynamic> route) => false);
+                });
+              },
+              child: Icon(Icons.exit_to_app),
+            )),
+      ]),
       body: Form(
         child: FutureBuilder(
           future: _getData(),

@@ -11,6 +11,7 @@
 
 .vscode/
 .dart_tool/
+build/
 
 android/key.properties
 # IntelliJ related
