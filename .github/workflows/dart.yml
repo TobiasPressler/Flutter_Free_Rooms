@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Fetch all history for all tags and branches
-      run: |
-        git fetch
+      with:
+        submodules: true
+        token: ${{ secrets.GH_TOKEN }}
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.2
       with:
