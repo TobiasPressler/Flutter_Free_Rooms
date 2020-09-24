@@ -1,15 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_progress_button/flutter_progress_button.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:flutter_progress_button/flutter_progress_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'otp.dart';
-//import 'package:otp/otp.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Freie Räume',
+      title: 'Free Rooms',
       routes: {
         '/start': (context) => SelectSchool(),
         '/login': (context) => Login(),
@@ -44,6 +43,7 @@ class SelectSchool extends StatefulWidget {
   _SelectSchoolState createState() => new _SelectSchoolState();
 }
 
+//Create a state for the select school state
 class _SelectSchoolState extends State<SelectSchool> {
   String url = 'https://mobile.webuntis.com/ms/schoolquery2/?v=a4.1.5';
 
@@ -174,12 +174,13 @@ class _LoginState extends State<Login> {
   String password = "";
   @override
   Widget build(BuildContext context) {
-    final emailField = TextField(
+    final accountField = TextField(
       obscureText: false,
       onChanged: (text) => username = text,
       decoration: InputDecoration(
+          prefixIcon: Icon(Icons.person),
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
+          hintText: "Username",
           enabled: enabled,
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
@@ -188,6 +189,7 @@ class _LoginState extends State<Login> {
       obscureText: true,
       onChanged: (text) => password = text,
       decoration: InputDecoration(
+          prefixIcon: Icon(Icons.lock),
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
           enabled: enabled,
@@ -200,15 +202,20 @@ class _LoginState extends State<Login> {
         centerTitle: true,
         title: Text("Login"),
       ),
-      body: Center(
-        child: Container(
+      body: Stack(alignment: Alignment.center, children: [
+        Positioned(
+          top: 40,
+          //left: 20,
+          child: Text("Welcome", style: TextStyle(fontSize: 30)),
+        ),
+        Container(
           child: Padding(
             padding: const EdgeInsets.all(36.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                emailField,
+                accountField,
                 SizedBox(height: 25.0),
                 passwordField,
                 SizedBox(
@@ -223,8 +230,9 @@ class _LoginState extends State<Login> {
                         style: TextStyle(color: Colors.white),
                       ),
                       progressWidget: const CircularProgressIndicator(),
-                      width: 196,
+                      // width: 200,
                       height: 40,
+                      borderRadius: 32.0,
                       onPressed: () async {
                         try {
                           var data = await checkLogin(username, password);
@@ -250,7 +258,7 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-      ),
+      ]),
     );
   }
 }
@@ -322,7 +330,7 @@ class _FreieRaeumeState extends State<FreieRaeume> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Freie Räume"),
+        title: Text("Free Rooms"),
       ),
       body: Form(
         child: FutureBuilder(
@@ -339,74 +347,77 @@ class _FreieRaeumeState extends State<FreieRaeume> {
             if (snapshot.connectionState == ConnectionState.done) {
               return Column(
                 children: <Widget>[
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        DropdownButton<Timegrid>(
-                          value: dropdownValue,
-                          icon: Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          onChanged: (Timegrid newValue) {
-                            dropdownValue = newValue;
-                            if (currentDate != null) {
-                              freeRooms.value = _getFreeRooms(
-                                  dropdownValue.startTime,
-                                  dropdownValue.endTime,
-                                  currentDate);
-                            }
-                            setState(() {});
+                        FlatButton(
+                          onPressed: () {
+                            DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime(2000, 1, 1),
+                                maxTime: DateTime(2050, 12, 31),
+                                onConfirm: (date) {
+                              currentDate = date;
+                              if (dropdownValue != null) {
+                                freeRooms.value = _getFreeRooms(
+                                    dropdownValue.startTime,
+                                    dropdownValue.endTime,
+                                    date);
+                              }
+                              setState(() {});
+                            }, currentTime: DateTime.now());
                           },
-                          items: items.map<DropdownMenuItem<Timegrid>>(
-                              (Timegrid value) {
-                            return DropdownMenuItem<Timegrid>(
-                                value: value,
-                                child: Text(
-                                  (items.indexOf(value) + 1).toString() +
-                                      ". Stunde (" +
-                                      df.format(value.startTime) +
-                                      " - " +
-                                      df.format(value.endTime) +
-                                      ")",
-                                ));
-                          }).toList(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.black12))),
+                            child: Text(
+                              DateFormat("dd.MM.yyyy").format(currentDate),
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              DropdownButton<Timegrid>(
+                                value: dropdownValue,
+                                icon: Icon(Icons.arrow_downward),
+                                iconSize: 24,
+                                elevation: 16,
+                                onChanged: (Timegrid newValue) {
+                                  dropdownValue = newValue;
+                                  if (currentDate != null) {
+                                    freeRooms.value = _getFreeRooms(
+                                        dropdownValue.startTime,
+                                        dropdownValue.endTime,
+                                        currentDate);
+                                  }
+                                  setState(() {});
+                                },
+                                items: items.map<DropdownMenuItem<Timegrid>>(
+                                    (Timegrid value) {
+                                  return DropdownMenuItem<Timegrid>(
+                                      value: value,
+                                      child: Text(
+                                        (items.indexOf(value) + 1).toString() +
+                                            ". Stunde (" +
+                                            df.format(value.startTime) +
+                                            " - " +
+                                            df.format(value.endTime) +
+                                            ")",
+                                      ));
+                                }).toList(),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text("Datum: "),
-                    FlatButton(
-                      onPressed: () {
-                        DatePicker.showDatePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime(2000, 1, 1),
-                            maxTime: DateTime(2022, 12, 31),
-                            // onChanged: (date) {print('change $date');},
-                            onConfirm: (date) {
-                          currentDate = date;
-                          if (dropdownValue != null) {
-                            freeRooms.value = _getFreeRooms(
-                                dropdownValue.startTime,
-                                dropdownValue.endTime,
-                                date);
-                          }
-                          setState(() {});
-                        }, currentTime: DateTime.now());
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Text(
-                          DateFormat("dd.MM.yyyy").format(currentDate),
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                    ),
-                  ]),
                   ValueListenableBuilder(
                     valueListenable: freeRooms,
                     builder: (context, value, child) {
