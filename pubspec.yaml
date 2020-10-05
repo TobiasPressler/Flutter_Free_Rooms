@@ -37,14 +37,14 @@ dev_dependencies:
   flutter_launcher_icons: ^0.7.4
 
 flutter_native_splash:
-  image: assets/Logo_Spectre.png
+  image: assets/Logo.png
   color: "ff8300"
   fill: true
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/Logo_Spectre.png"
+  image_path: "assets/Logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
