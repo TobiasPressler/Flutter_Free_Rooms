@@ -13,8 +13,8 @@ const RESOURCES = {
 "assets/assets/Logo_Spectre.png": "e386029cb9a60d4f1473561349fd8e3b",
 "assets/AssetManifest.json": "fda6d7a9c9b05887c65a8015e3200fd1",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
-"index.html": "a0df7e98004a17c8678e73fad8133896",
-"/": "a0df7e98004a17c8678e73fad8133896",
+"index.html": "4d8fe2386e9a099de6e97d1f4c91d60a",
+"/": "4d8fe2386e9a099de6e97d1f4c91d60a",
 "manifest.json": "5d46a6ae155075afc830d059f3eba611",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1"
