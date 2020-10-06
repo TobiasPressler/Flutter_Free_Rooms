@@ -11338,7 +11338,7 @@ this.b=b},
 rB:function rB(a,b,c){this.f=a
 this.b=b
 this.a=c},
-a3D:function(a,b){return G.a30(new G.a3E(a,null,b,null),t.eT)},
+a3D:function(a,b,c){return G.a30(new G.a3E(a,c,b,null),t.eT)},
 a30:function(a,b){return G.ako(a,b,b.j("0*"))},
 ako:function(a,b,c){var s=0,r=P.X(c),q,p=2,o,n=[],m,l
 var $async$a30=P.S(function(d,e){if(d===1){o=e
@@ -16648,7 +16648,7 @@ case 3:m=d
 m.pX("String","username",a)
 p=t.X
 s=4
-return P.a2(G.a3D(J.hX(J.av(m.a,"apiLink"),"&v=4.1.5&gm=getAppSharedSecret"),C.a6.GB(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getAppSharedSecret","params",H.a([P.R(["password",b,"userName",a],p,p)],t.oA)],p,t._),null)),$async$JF)
+return P.a2(G.a3D(J.hX(J.av(m.a,"apiLink"),"&v=4.1.5&gm=getAppSharedSecret"),C.a6.GB(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getAppSharedSecret","params",H.a([P.R(["password",b,"userName",a],p,p)],t.oA)],p,t._),null),null),$async$JF)
 case 4:o=d
 n=C.a6.nh(0,B.a3i(U.a2t(o.e).c.a.h(0,"charset")).ds(0,o.x),null)
 p=J.aa(n)
@@ -55152,11 +55152,12 @@ F.HX.prototype={
 G:function(a,b){var s=null,r=E.a44(s,!0,L.cl("Schule ausw\xe4hlen",s,s,s,s,s)),q=F.bo(b,!1).a
 return M.a54(r,T.iS(C.pj,H.a([T.lu(s,M.bz(s,new L.lY(new F.a0S(this),new F.a0T(b),new F.a0U(),new L.DX(L.Pp(s,new F.dr(4,C.cl,new Y.cC(C.j,1,C.D)),s,s,s,s,new F.dr(4,C.cl,new Y.cC(C.p,1,C.D)),!0,new F.dr(4,C.cl,new Y.cC(C.j,1,C.D)),s,s,s,s,s,s,C.hz,s,s,s,!0,s,s,s,s,s,s,s,s,!1,s,A.hF(s,s,C.j,s,s,s,s,s,s,s,s,s,s,s,s,s,!0,s,s,s,s,s,s),s,s,s,s,s,s,s,s,s,s,s,s),!0),s,t.Ea),s,s,s,s,s,s,s,q.a/4*3),s,s,s,s,20,s)],t.t),C.aW,s,s),!1)},
 uO:function(a){return this.QC(a)},
-QC:function(a){var s=0,r=P.X(t.eT),q,p,o
+QC:function(a){var s=0,r=P.X(t.eT),q,p,o,n
 var $async$uO=P.S(function(b,c){if(b===1)return P.U(c,r)
 while(true)switch(s){case 0:p=t.X
-o=t._
-q=G.a3D("https://mobile.webuntis.com/ms/schoolquery2/?v=a4.1.5",C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","searchSchool","params",H.a([P.R(["schoolid",0,"search",a],p,o)],t.be)],p,o)))
+o=P.R(["User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"],p,p)
+n=t._
+q=G.a3D("https://mobile.webuntis.com/ms/schoolquery2/?v=a4.1.5",C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","searchSchool","params",H.a([P.R(["schoolid",0,"search",a],p,n)],t.be)],p,n)),o)
 s=1
 break
 case 1:return P.V(q,r)}})
@@ -55279,7 +55280,7 @@ i=J.aa(j)
 h=t.X
 g=t._
 s=4
-return P.a2(G.a3D(J.hX(i.h(j,"apiLink"),"&v=4.1.5&gm=getAvailableRooms2017"),C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getAvailableRooms2017","params",H.a([P.R(["endDateTime",l.iH(n),"startDateTime",l.iH(o),"auth",P.R(["clientTime",k,"otp",T.a8o(i.h(j,"sharedSecret"),k),"user",i.h(j,"username")],h,g)],h,g)],t.be)],h,g))),$async$kj)
+return P.a2(G.a3D(J.hX(i.h(j,"apiLink"),"&v=4.1.5&gm=getAvailableRooms2017"),C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getAvailableRooms2017","params",H.a([P.R(["endDateTime",l.iH(n),"startDateTime",l.iH(o),"auth",P.R(["clientTime",k,"otp",T.a8o(i.h(j,"sharedSecret"),k),"user",i.h(j,"username")],h,g)],h,g)],t.be)],h,g)),null),$async$kj)
 case 4:f=e
 q=J.kv(t.aG.a(J.av(J.av(C.a6.nh(0,B.a3i(U.a2t(f.e).c.a.h(0,"charset")).ds(0,f.x),null),"result"),"roomIds")),new F.Zh(p),t.kY).dG(0)
 s=1
@@ -55296,7 +55297,7 @@ if(p.e.length===0){o=k.a
 n=J.aa(o)
 m=t.X
 l=t._
-q=G.a3D(J.hX(n.h(o,"apiLink"),"&v=4.1.5&gm=getUserData2017"),C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getUserData2017","params",H.a([P.R(["currentFcmToken","","deviceOs","AND","deviceOsVersion","whyDoYouCare","elementId",0,"imei","whyDoYouCare","oldFcmToken","","auth",P.R(["clientTime",j,"otp",T.a8o(n.h(o,"sharedSecret"),j),"user",n.h(o,"username")],m,l)],m,l)],t.be)],m,l)))
+q=G.a3D(J.hX(n.h(o,"apiLink"),"&v=4.1.5&gm=getUserData2017"),C.a6.ep(P.R(["id","untis-mobile-android-4.1.5","jsonrpc","2.0","method","getUserData2017","params",H.a([P.R(["currentFcmToken","","deviceOs","AND","deviceOsVersion","whyDoYouCare","elementId",0,"imei","whyDoYouCare","oldFcmToken","","auth",P.R(["clientTime",j,"otp",T.a8o(n.h(o,"sharedSecret"),j),"user",n.h(o,"username")],m,l)],m,l)],t.be)],m,l)),null)
 s=1
 break}else{q=P.a4x(P.dK(0,0,0),t.eT)
 s=1
@@ -55413,6 +55414,7 @@ Vm:function(a,b,c,d,e){var s=0,r=P.X(t.eT),q,p=this,o,n,m
 var $async$pW=P.S(function(f,g){if(f===1)return P.U(g,r)
 while(true)switch(s){case 0:o=P.Ei(b)
 n=O.ah4(a,o)
+if(c!=null)n.r.V(0,c)
 n.sXp(0,d)
 m=U
 s=3
