@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_progress_button/flutter_progress_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -22,7 +22,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final String initialRoute;
 
-  MyApp({this.initialRoute});
+  MyApp({required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +90,10 @@ class _SelectSchoolState extends State<SelectSchool> {
                       suggestions.add({
                         'name': schools[i]['displayName'],
                         'address': schools[i]['address'],
-                        'api': (schools[i]['mobileServiceUrl'] +
-                            "?school=" +
-                            schools[i]['loginName'])
+                        'api': (schools[i]['serverUrl'].split("?")[0] +
+                            "jsonrpc_intern.do?school=" +
+                            schools[i]['loginName'] +
+                            "&v=a5.2.3")
                       });
                     }
                   } else {
@@ -106,7 +107,7 @@ class _SelectSchoolState extends State<SelectSchool> {
                   }
                   return suggestions;
                 },
-                itemBuilder: (context, suggestion) {
+                itemBuilder: (context, dynamic suggestion) {
                   return ListTile(
                     title: Text(suggestion['name']),
                     subtitle: suggestion['address'] != ''
@@ -114,7 +115,7 @@ class _SelectSchoolState extends State<SelectSchool> {
                         : null,
                   );
                 },
-                onSuggestionSelected: (suggestion) async {
+                onSuggestionSelected: (dynamic suggestion) async {
                   if (suggestion['api'] != '') {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
@@ -131,13 +132,13 @@ class _SelectSchoolState extends State<SelectSchool> {
   }
 
   Future<http.Response> _getSuggestions(String part) async {
-    return http.post(url,
+    return http.post(Uri.parse(url),
         headers: <String, String>{
           "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
         },
         body: json.encode({
-          'id': "untis-mobile-android-4.1.5",
+          'id': "untis-mobile-android-5.2.3",
           'jsonrpc': "2.0",
           'method': 'searchSchool',
           'params': [
@@ -151,16 +152,20 @@ Future<String> checkLogin(String username, String password) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString("username", username);
   var data = await http.post(
-      prefs.getString("apiLink") + "&v=4.1.5&gm=getAppSharedSecret",
+      Uri.parse((prefs.getString("apiLink")! + "&m=getAppSharedSecret")),
       body: jsonEncode({
-        'id': "untis-mobile-android-4.1.5",
+        'id': "untis-mobile-android-5.2.3",
         'jsonrpc': "2.0",
         'method': 'getAppSharedSecret',
         'params': [
           {'password': password, 'userName': username}
         ]
       }));
+
   var json = jsonDecode(data.body);
+
+  print(json);
+
   if (json['result'] != null) {
     return json['result'];
   } else {
@@ -168,6 +173,8 @@ Future<String> checkLogin(String username, String password) async {
       throw Error();
     }
   }
+
+  return "";
 }
 
 class Login extends StatefulWidget {
@@ -176,6 +183,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  ButtonState buttonState = ButtonState.idle;
   bool enabled = true;
   String username = "";
   String password = "";
@@ -231,6 +239,44 @@ class _LoginState extends State<Login> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return ProgressButton(
+                        stateWidgets: {
+                          ButtonState.idle: const Text(
+                            'Login',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          ButtonState.loading: const Text(""),
+                          ButtonState.success: const Text("SUCCESS"),
+                          ButtonState.fail: const Text("FAIL")
+                        },
+                        stateColors: {
+                          ButtonState.idle: const Color(0xff01A0C7),
+                          ButtonState.loading: const Color(0xff01A0C7),
+                          ButtonState.success: const Color(0xff01A0C7),
+                          ButtonState.fail: Colors.red
+                        },
+                        state: buttonState,
+                        onPressed: () async {
+                          setState(() {
+                            buttonState = ButtonState.loading;
+                          });
+                          try {
+                            var data = await checkLogin(username, password);
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setString("sharedSecret", data);
+                            setState(() {
+                              buttonState = ButtonState.success;
+                            });
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/freieRaeume',
+                                (Route<dynamic> route) => false);
+                          } catch (e) {
+                            setState(() {
+                              buttonState = ButtonState.fail;
+                            });
+                          }
+                        });
+                    /* return ProgressButton(
                       color: Color(0xff01A0C7),
                       defaultWidget: const Text(
                         'Login',
@@ -255,7 +301,7 @@ class _LoginState extends State<Login> {
                           ));
                         }
                       },
-                    );
+                    ); */
                   },
                 ),
                 SizedBox(
@@ -274,7 +320,7 @@ class Timegrid {
   final DateTime startTime;
   final DateTime endTime;
 
-  Timegrid({this.startTime, this.endTime});
+  Timegrid({required this.startTime, required this.endTime});
 
   factory Timegrid.fromJson(Map<String, dynamic> json) {
     var format = new DateFormat("HH:mm");
@@ -289,7 +335,7 @@ class Room {
   final String name;
   final String longName;
 
-  Room({this.id, this.name, this.longName});
+  Room({required this.id, required this.name, required this.longName});
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
@@ -305,21 +351,23 @@ class FreieRaeume extends StatefulWidget {
 }
 
 class _FreieRaeumeState extends State<FreieRaeume> {
-  Timegrid dropdownValue;
-  List<Timegrid> items = [];
+  List<Timegrid> items = [
+    Timegrid(startTime: DateTime.now(), endTime: DateTime.now())
+  ];
+  late Timegrid dropdownValue = items[0];
   List<Room> rooms = [];
   DateFormat df = DateFormat("HH:mm");
   DateTime selectedDate = DateTime.now();
-  ValueNotifier<Future<List<Room>>> freeRooms =
-      ValueNotifier(Future.value(null));
+  ValueNotifier<Future<List<Room>>> freeRooms = ValueNotifier(Future.value([]));
   GlobalKey roomListKey = GlobalKey();
   DateTime currentDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     _getData().then((data) {
-      if (data != null) {
+      if (data is http.Response) {
         var json = jsonDecode(data.body);
+        print(json);
         rooms = (json['result']['masterData']['rooms'] as List).map((room) {
           return Room.fromJson(room);
         }).toList();
@@ -330,6 +378,7 @@ class _FreieRaeumeState extends State<FreieRaeume> {
         }).toList();
         setState(() {
           items = timegrids;
+          dropdownValue = items[0];
         });
       }
     });
@@ -405,8 +454,8 @@ class _FreieRaeumeState extends State<FreieRaeume> {
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 16,
-                                onChanged: (Timegrid newValue) {
-                                  dropdownValue = newValue;
+                                onChanged: (Timegrid? newValue) {
+                                  dropdownValue = newValue!;
                                   if (currentDate != null) {
                                     freeRooms.value = _getFreeRooms(
                                         dropdownValue.startTime,
@@ -435,14 +484,14 @@ class _FreieRaeumeState extends State<FreieRaeume> {
                       ],
                     ),
                   ),
-                  ValueListenableBuilder(
+                  ValueListenableBuilder<Future<List<Room>>>(
                     valueListenable: freeRooms,
                     builder: (context, value, child) {
-                      return FutureBuilder(
+                      return FutureBuilder<List<Room>>(
                         future: value,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return RoomList(snapshot.data);
+                            return RoomList(snapshot.data!);
                           }
                           if (snapshot.connectionState !=
                               ConnectionState.done) {
@@ -481,7 +530,7 @@ class _FreieRaeumeState extends State<FreieRaeume> {
     DateFormat formatter = DateFormat("yyyy-MM-dd'T'HH:mm'Z'");
     int millis = new DateTime.now().millisecondsSinceEpoch;
     var value = await http.post(
-        prefs.getString("apiLink") + "&v=4.1.5&gm=getAvailableRooms2017",
+        Uri.parse(prefs.getString("apiLink")! + "&gm=getAvailableRooms2017"),
         body: json.encode({
           "id": "untis-mobile-android-4.1.5",
           "jsonrpc": "2.0",
@@ -493,7 +542,7 @@ class _FreieRaeumeState extends State<FreieRaeume> {
               "auth": {
                 "clientTime": millis,
                 "otp": OTP.generateTOTPCode(
-                    prefs.getString("sharedSecret"), millis),
+                    prefs.getString("sharedSecret")!, millis),
                 "user": prefs.getString("username")
               }
             }
@@ -506,12 +555,12 @@ class _FreieRaeumeState extends State<FreieRaeume> {
     }).toList());
   }
 
-  Future<http.Response> _getData() async {
+  Future<dynamic> _getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int millis = new DateTime.now().millisecondsSinceEpoch;
-    if (items.length == 0) {
+    if (items.length == 1) {
       return http.post(
-          prefs.getString("apiLink") + "&v=4.1.5&gm=getUserData2017",
+          Uri.parse(prefs.getString("apiLink")! + "&gm=getUserData2017"),
           body: json.encode({
             "id": "untis-mobile-android-4.1.5",
             "jsonrpc": "2.0",
@@ -527,14 +576,14 @@ class _FreieRaeumeState extends State<FreieRaeume> {
                 "auth": {
                   "clientTime": millis,
                   "otp": OTP.generateTOTPCode(
-                      prefs.getString("sharedSecret"), millis),
+                      prefs.getString("sharedSecret")!, millis),
                   "user": prefs.getString("username")
                 }
               }
             ]
           }));
     } else {
-      return Future.delayed(Duration(milliseconds: 0));
+      return new Future<String>.value("");
     }
   }
 }
