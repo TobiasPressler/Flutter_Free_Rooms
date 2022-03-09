@@ -13,7 +13,7 @@ jobs:
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.7
       with:
-          versionSpec: '5.2.x'
+          versionSpec: '5.5.0'
     - name: Use GitVersion
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.9.7
@@ -35,7 +35,7 @@ jobs:
         java-version: '12.x'
     - uses: subosito/flutter-action@v1
       with:
-        flutter-version: '1.20.4'
+        flutter-version: '2.10.3'
     - name: Get version.txt
       uses: actions/download-artifact@v2
       with:
