@@ -1,4 +1,4 @@
-package com.spectre.flutterfreerooms
+package com.spectre.freerooms
 
 import io.flutter.embedding.android.FlutterActivity
 
