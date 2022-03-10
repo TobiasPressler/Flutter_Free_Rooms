@@ -2,7 +2,7 @@
     package="com.spectre.flutterfreerooms">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="flutterfreerooms"
+        android:label="Freie Räume"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
